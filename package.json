@@ -64,6 +64,7 @@
     "moment": "^2.29.1",
     "mongodb": "^3.6.5",
     "mongoose": "^5.12.3",
+    "node-cron": "^3.0.0",
     "nodemon": "^2.0.4",
     "path": "^0.12.7",
     "pusher": "^4.0.1",

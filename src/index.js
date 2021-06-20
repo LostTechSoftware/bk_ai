@@ -6,7 +6,9 @@ const cookieParser = require("cookie-parser");
 const http = require("http");
 const rateLimit = require("express-rate-limit");
 const Sentry = require("@sentry/node");
+const Tracing = require("@sentry/tracing");
 const helmet = require("helmet");
+const { sendLogInfo } = require("./logs/coralogix");
 
 const app = express();
 
@@ -42,6 +44,13 @@ app.use(helmet());
 Sentry.init({
   dsn: process.env.SENTRY_URL,
   environment: process.env.PROD === true ? "PRODUCTION" : "STAGING",
+  integrations: [
+    new Sentry.Integrations.Http({ tracing: true }),
+    new Tracing.Integrations.Express({
+      app,
+    }),
+  ],
+  tracesSampleRate: 1.0,
 });
 
 app.use((req, res, next) => {
@@ -54,9 +63,16 @@ app.use(Sentry.Handlers.requestHandler());
 
 app.use(Sentry.Handlers.errorHandler());
 
+app.use(Sentry.Handlers.tracingHandler());
+
 require("./routes")(app);
 require("./logs/coralogix");
+require("./events");
 
-console.log(process.env.PORT || 3002);
+console.log(`Now running in PORT: ${process.env.PORT || 3002}`);
+sendLogInfo({
+  data: `Now running in PORT: ${process.env.PORT || 3002}`,
+  name: "INFO",
+});
 
 server.listen(process.env.PORT || 3002);

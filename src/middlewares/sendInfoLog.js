@@ -3,9 +3,11 @@ const { sendLogInfo } = require("../logs/coralogix");
 
 module.exports = (req, res, next) => {
   const { body } = req;
-  const data = `[INFO ${moment().format("MMM Do YY")}] ${{ ...body }}`;
+  const data1 = `[INFO ${moment().format("MMM Do YY")}]`;
+  const data2 = body;
 
-  sendLogInfo({ data, name: "INFO" });
+  sendLogInfo({ data: data1, name: "INFO" });
+  sendLogInfo({ data: data2, name: "INFO" });
 
   return next();
 };

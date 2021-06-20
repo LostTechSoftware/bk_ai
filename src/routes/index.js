@@ -1,3 +1,3 @@
 module.exports = (app) => {
-  require("./Partners")(app);
+  require("./all")(app);
 };
