@@ -15,27 +15,27 @@ const params = {
 };
 
 cron.schedule("* * * * *", () => {
-  sqs.receiveMessage(params, (err, data) => {
+  sqs.receiveMessage(params, (err, message) => {
     if (err) {
       console.log(err, err.stack);
       sendLogError({ data: `Queue error ${err}`, name: "ERROR" });
     } else {
-      if (!data.Messages) {
+      if (!message.Messages) {
         sendLogInfo({ data: "Nothing to process", name: "INFO" });
         console.log("Nothing to process");
         return;
       }
-      const orderData = data.Messages[0].Body;
+      const orderData = message.Messages[0].Body;
       sendLogInfo({ data: orderData, name: "INFO" });
 
-      var deleteParams = {
+      const deleteParams = {
         QueueUrl: queueUrl,
-        ReceiptHandle: data.Messages[0].ReceiptHandle,
+        ReceiptHandle: message.Messages[0].ReceiptHandle,
       };
-      sqs.deleteMessage(deleteParams, function (err, data) {
-        if (err) {
-          console.log("Delete Error", err);
-          sendLogError({ data: `Delete Error ${err}`, name: "ERROR" });
+      sqs.deleteMessage(deleteParams, function (error, data) {
+        if (error) {
+          console.log("Delete Error", error);
+          sendLogError({ data: `Delete Error ${error}`, name: "ERROR" });
         } else {
           console.log("Message Deleted", data);
           sendLogInfo({ data: `Message Deleted ${data}`, name: "INFO" });
