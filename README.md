@@ -93,7 +93,7 @@ Para iniciar o projeto é necessário seguir os passos abaixo:
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/LostTechSoftware/bk_clientes
+   git clone https://github.com/LostTechSoftware/ms_ai
    ```
 2. Install packages
    ```sh
@@ -101,7 +101,7 @@ Para iniciar o projeto é necessário seguir os passos abaixo:
    ```
 3. Clone environment keys
    ```JS
-   heroku config -a foodzilla-staging-ms_ai -s >> .env
+   heroku config -a foodzilla-staging-ms-ai -s >> .env
    ```
 
 <!-- USAGE EXAMPLES -->
