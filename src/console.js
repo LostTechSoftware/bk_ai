@@ -19,6 +19,7 @@ const start = async () => {
   });
 
   replServer.context.mongoose = mongoose;
+
   replServer.context.scripts = require("./scripts");
 };
 
