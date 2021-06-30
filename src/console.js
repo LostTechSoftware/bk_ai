@@ -12,6 +12,7 @@ const start = async () => {
   });
 
   mongoose.Promise = global.Promise;
+
   console.log("MongoDB connected");
 
   const replServer = repl.start({
