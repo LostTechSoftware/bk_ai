@@ -4,7 +4,8 @@ const Coralogix = require("coralogix-logger");
 const config = new Coralogix.LoggerConfig({
   applicationName: "MS_AI",
   privateKey: "35a4e0a3-6526-9a50-d1d2-1f1b9d14bd25",
-  subsystemName: process.env.PROD === true ? "PRODUCTION" : "STAGING",
+  subsystemName:
+    process.env.NODE_ENV === "production" ? "PRODUCTION" : "STAGING",
 });
 
 Coralogix.CoralogixLogger.configure(config);

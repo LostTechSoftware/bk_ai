@@ -43,7 +43,7 @@ app.use(helmet());
 
 Sentry.init({
   dsn: process.env.SENTRY_URL,
-  environment: process.env.PROD === true ? "PRODUCTION" : "STAGING",
+  environment: process.env.NODE_ENV === "production" ? "PRODUCTION" : "STAGING",
   integrations: [
     new Sentry.Integrations.Http({ tracing: true }),
     new Tracing.Integrations.Express({

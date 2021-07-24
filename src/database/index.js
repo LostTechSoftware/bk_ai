@@ -10,7 +10,7 @@ mongoose.Promise = global.Promise;
 
 console.log(
   `Banco de dados conectado: ${
-    process.env.PROD === true ? "Produção" : "Staging"
+    process.env.NODE_ENV === "production" ? "Produção" : "Staging"
   }`
 );
 
