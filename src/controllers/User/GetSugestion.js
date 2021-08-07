@@ -9,7 +9,8 @@ const GetSugestion = async (req, res) => {
       name: "INFO",
     });
 
-    const user = await User.findOne({ UserId });
+    const user =
+      (await User.findOne({ UserId })) || (await User.create({ UserId }));
 
     res
       .status(200)

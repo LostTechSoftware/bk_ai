@@ -15,8 +15,8 @@ router.post("/create/partner", authMiddleware, sendInfoLog, NewPartner);
 router.post("/create/user", authMiddleware, sendInfoLog, NewUser);
 router.post("/create/route", authMiddleware, sendInfoLog, NewRoute);
 
-router.get("/get/user", authMiddleware, sendInfoLog, GetSugestion);
-router.get("/get/partner", authMiddleware, sendInfoLog, GetTime);
-router.get("/get/route", authMiddleware, sendInfoLog, GetRoute);
+router.post("/get/user", authMiddleware, sendInfoLog, GetSugestion);
+router.post("/get/partner", authMiddleware, sendInfoLog, GetTime);
+router.post("/get/route", authMiddleware, sendInfoLog, GetRoute);
 
 module.exports = (app) => app.use(router);

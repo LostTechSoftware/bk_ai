@@ -7,11 +7,5 @@ module.exports = (req, res, next) => {
     return res.status(401).send("Token invalid");
   }
 
-  const Origin = req.headers.origin;
-
-  if (Origin !== process.env.ORIGIN) {
-    return res.status(401).send("Not authorized");
-  }
-
   return next();
 };

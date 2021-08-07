@@ -1,46 +1,65 @@
 const AWS = require("aws-sdk");
+const { Consumer } = require("sqs-consumer");
 const { sendLogInfo, sendLogError } = require("../logs/coralogix");
-const cron = require("node-cron");
+
+const validatorJson = require("../validators/validatorJson");
+const { NewOrder } = require("../services/SqsServices/Order");
 
 AWS.config.update({ region: "us-east-2" });
-var sqs = new AWS.SQS({ apiVersion: "2012-11-05" });
+const sqs = new AWS.SQS({ apiVersion: "2012-11-05", region: "us-east-2" });
 
-const queueUrl = process.env.AWS_QUEUE_STAGING;
+const queueUrl = process.env.AWS_QUEUE;
 
-const params = {
-  QueueUrl: queueUrl,
-  MaxNumberOfMessages: 10,
-  VisibilityTimeout: 20,
-  WaitTimeSeconds: 0,
+const sqsEvents = async (message, event) => {
+  const obj = {
+    NewOrder: await NewOrder(message),
+  };
+
+  return obj[event];
 };
 
-cron.schedule("* * * * *", () => {
-  sqs.receiveMessage(params, (err, message) => {
-    if (err) {
-      console.log(err, err.stack);
-      sendLogError({ data: `Queue error ${err}`, name: "ERROR" });
-    } else {
-      if (!message.Messages) {
-        sendLogInfo({ data: "Nothing to process", name: "INFO" });
-        console.log("Nothing to process");
-        return;
-      }
-      const orderData = message.Messages[0].Body;
-      sendLogInfo({ data: orderData, name: "INFO" });
+function CreateConsumers() {
+  sendLogInfo({ data: `Initing ${queueUrl}`, name: "INFO" });
+
+  const consumer = Consumer.create({
+    queueUrl,
+    sqs,
+    handleMessage: async (message) => {
+      sendLogInfo({ data: message.Body, name: "INFO" });
+
+      const orderData = validatorJson(message.Body) && JSON.parse(message.Body);
+
+      await sqsEvents(orderData.data, orderData.event);
 
       const deleteParams = {
         QueueUrl: queueUrl,
-        ReceiptHandle: message.Messages[0].ReceiptHandle,
+        ReceiptHandle: message.ReceiptHandle,
       };
       sqs.deleteMessage(deleteParams, function (error, data) {
         if (error) {
-          console.log("Delete Error", error);
           sendLogError({ data: `Delete Error ${error}`, name: "ERROR" });
         } else {
-          console.log("Message Deleted", data);
           sendLogInfo({ data: `Message Deleted ${data}`, name: "INFO" });
         }
       });
-    }
+    },
   });
-});
+
+  consumer.on("error", (err) => {
+    sendLogError({ data: err.message, name: "ERROR" });
+  });
+
+  consumer.on("processing_error", (err) => {
+    sendLogError({ data: err.message, name: "ERROR" });
+  });
+
+  consumer.on("timeout_error", (err) => {
+    sendLogError({ data: err.message, name: "ERROR" });
+  });
+
+  consumer.start();
+
+  sendLogInfo({ data: `Started ${queueUrl}`, name: "INFO" });
+}
+
+module.exports = CreateConsumers;

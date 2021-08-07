@@ -6664,6 +6664,13 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw=
 
+sqs-consumer@^5.5.0:
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/sqs-consumer/-/sqs-consumer-5.5.0.tgz#9d019e25f4c3217c684e14595d0b08e4957e9fdb"
+  integrity sha512-vzKzOZlZtZarOWbg/nbEoMyNu64XnQ4QB3e74nMBNaIuM/RhelUGNGrvrB83IW6a7/DxKDulM46h2TeQP3/1nA==
+  dependencies:
+    debug "^4.1.1"
+
 sshpk@^1.7.0:
   version "1.16.1"
   resolved "https://registry.yarnpkg.com/sshpk/-/sshpk-1.16.1.tgz#fb661c0bef29b39db40769ee39fa70093d6f6877"

@@ -69,7 +69,6 @@ require("./routes")(app);
 require("./logs/coralogix");
 require("./events");
 
-console.log(`Now running in PORT: ${process.env.PORT || 3002}`);
 sendLogInfo({
   data: `Now running in PORT: ${process.env.PORT || 3002}`,
   name: "INFO",

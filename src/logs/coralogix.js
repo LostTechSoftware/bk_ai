@@ -15,6 +15,8 @@ const info = new Coralogix.CoralogixLogger("info");
 const error = new Coralogix.CoralogixLogger("error");
 
 function sendLogInfo({ name, data }) {
+  console.log({ name, data });
+
   const log = new Coralogix.Log({
     severity: Coralogix.Severity.info,
     className: name,
@@ -26,6 +28,8 @@ function sendLogInfo({ name, data }) {
 }
 
 function sendLogError({ name, data }) {
+  console.log({ name, data });
+
   const log = new Coralogix.Log({
     severity: Coralogix.Severity.error,
     className: name,
