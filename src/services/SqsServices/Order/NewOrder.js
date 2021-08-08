@@ -27,8 +27,6 @@ const NewOrder = async (message) => {
       name: "Criando pedido e executando processos",
     });
 
-    console.log(order);
-
     const {
       user: { name: username, _id: UserId },
       restaurant: { _id: PartnerId, name },
@@ -88,7 +86,7 @@ const NewOrder = async (message) => {
       }
     }
 
-    if (categories && DeliveriedAt) {
+    if (categories.length || categoriesDrink.length) {
       try {
         sendLogInfo({
           data: `Recalculando sugestões para o usuário ${username}`,

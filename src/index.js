@@ -9,6 +9,7 @@ const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
 const helmet = require("helmet");
 const { sendLogInfo } = require("./logs/coralogix");
+const CreateConsumers = require("./events");
 
 const app = express();
 
@@ -67,7 +68,7 @@ app.use(Sentry.Handlers.tracingHandler());
 
 require("./routes")(app);
 require("./logs/coralogix");
-require("./events");
+CreateConsumers();
 
 sendLogInfo({
   data: `Now running in PORT: ${process.env.PORT || 3002}`,
