@@ -1,21 +1,21 @@
-const httpContext = require('express-http-context')
-const { v4: uuidv4 } = require('uuid')
+const httpContext = require("express-http-context");
+const { v4: uuidv4 } = require("uuid");
 
-const logs = require('../logs')
+const logs = require("../logs");
 
 const middlewaresLogs = async (app) => {
-  app.all('*', (req, res, next) => {
-    const requestId = req.headers['x-request-id'] || uuidv4()
+  app.all("*", (req, res, next) => {
+    const requestId = req.headers["request_id"] || uuidv4();
 
-    req.requestId = requestId
+    req.requestId = requestId;
 
-    httpContext.set('requestId', requestId)
+    httpContext.set("requestId", requestId);
 
-    logs.info(`[${req.method}] ${req.path}`)
-    logs.info(logs.beautify(req.body))
+    logs.info(`[${req.method}] ${req.path}`);
+    logs.info(logs.beautify(req.body));
 
-    return next()
-  })
-}
+    return next();
+  });
+};
 
-module.exports = middlewaresLogs
+module.exports = middlewaresLogs;
