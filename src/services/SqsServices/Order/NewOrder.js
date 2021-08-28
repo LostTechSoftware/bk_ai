@@ -1,5 +1,5 @@
 const Sentry = require("@sentry/node");
-const { sendLogInfo, sendLogError } = require("../../../logs/coralogix");
+const logs = require("../../../logs");
 const Partner = require("../../../models/restaurant");
 const User = require("../../../models/user");
 
@@ -38,10 +38,7 @@ const NewOrder = async (message) => {
 
     if (createdAt && DeliveriedAt) {
       try {
-        sendLogInfo({
-          data: `Recalculando tempo de entrega para o parceiro ${name}`,
-          name: "INFO",
-        });
+        logs.info(`Recalculando tempo de entrega para o parceiro ${name}`);
 
         const date1 = new Date(
           createdAt.slice(0, 4),
@@ -88,10 +85,7 @@ const NewOrder = async (message) => {
 
     if (categories.length || categoriesDrink.length) {
       try {
-        sendLogInfo({
-          data: `Recalculando sugestões para o usuário ${username}`,
-          name: "INFO",
-        });
+        logs.info(`Recalculando sugestões para o usuário ${username}`);
 
         const user = await User.findOne({ UserId });
 
@@ -157,10 +151,7 @@ const NewOrder = async (message) => {
         });
       }
 
-      sendLogInfo({
-        data: `Todos os processos foram rodados`,
-        name: "INFO",
-      });
+      logs.info(`Todos os processos foram rodados`);
 
       transaction.finish();
     }

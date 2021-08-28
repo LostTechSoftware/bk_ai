@@ -1,20 +1,16 @@
-const { sendLogInfo, sendLogError } = require("../../logs/coralogix");
+const logs = require("../../logs");
 const Partner = require("../../models/restaurant");
 
 const NewPartner = async (req, res) => {
   try {
     const { name, PartnerId, TimeOfDelivery } = req.body;
-    sendLogInfo({
-      data: `Criando novo parceiro ${name}`,
-      name: "INFO",
-    });
+    logs.info(`Criando novo parceiro ${name}`);
 
     const partner = await Partner.create({ name, PartnerId, TimeOfDelivery });
 
     res.send(partner);
   } catch (error) {
-    req.sentry.captureException(error);
-    sendLogError({ data: error, name: "ERROR IN CREATE PARTNER" });
+    logs.error(error);
     res.status(400).send("ERROR IN CREATE PARTNER");
   }
 };
