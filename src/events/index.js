@@ -1,6 +1,6 @@
 const AWS = require("aws-sdk");
 const { Consumer } = require("sqs-consumer");
-const { sendLogInfo, sendLogError } = require("../logs/coralogix");
+const logs = require("../logs");
 
 const validatorJson = require("../validators/validatorJson");
 const { NewOrder } = require("../services/SqsServices/Order");
@@ -19,13 +19,13 @@ const sqsEvents = async (message, event) => {
 };
 
 function CreateConsumers() {
-  sendLogInfo({ data: `Initing ${queueUrl}`, name: "INFO" });
+  logs.info(`Initing ${queueUrl}`);
 
   const consumer = Consumer.create({
     queueUrl,
     sqs,
     handleMessage: async (message) => {
-      sendLogInfo({ data: message.Body, name: "INFO" });
+      logs.info(message.Body);
 
       const orderData = validatorJson(message.Body) && JSON.parse(message.Body);
 
@@ -37,29 +37,29 @@ function CreateConsumers() {
       };
       sqs.deleteMessage(deleteParams, function (error, data) {
         if (error) {
-          sendLogError({ data: `Delete Error ${error}`, name: "ERROR" });
+          logs.error(`Delete Error ${error}`);
         } else {
-          sendLogInfo({ data: `Message Deleted ${data}`, name: "INFO" });
+          logs.info(`Message Deleted ${data}`);
         }
       });
     },
   });
 
   consumer.on("error", (err) => {
-    sendLogError({ data: err.message, name: "ERROR" });
+    logs.error(err.message);
   });
 
   consumer.on("processing_error", (err) => {
-    sendLogError({ data: err.message, name: "ERROR" });
+    logs.error(err.message);
   });
 
   consumer.on("timeout_error", (err) => {
-    sendLogError({ data: err.message, name: "ERROR" });
+    logs.error(err.message);
   });
 
   consumer.start();
 
-  sendLogInfo({ data: `Started ${queueUrl}`, name: "INFO" });
+  logs.info(`Started ${queueUrl}`);
 }
 
 module.exports = CreateConsumers;
