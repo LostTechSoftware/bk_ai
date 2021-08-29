@@ -1,14 +1,11 @@
 const { default: axios } = require("axios");
-const { sendLogInfo, sendLogError } = require("../../logs/coralogix");
+const logs = require("../../logs");
 const Route = require("../../models/route");
 
 const NewRoute = async (req, res) => {
   try {
     const { points, initialPoint, DeliveryManId } = req.body;
-    sendLogInfo({
-      data: `Calculando nova rota`,
-      name: "INFO",
-    });
+    logs.info(`Calculando nova rota`);
 
     const distances = [];
 
@@ -35,18 +32,10 @@ const NewRoute = async (req, res) => {
       distances,
     });
 
-    sendLogInfo({
-      data: `Nova rota calculada`,
-      name: "INFO",
-    });
+    logs.info(`Nova rota calculada`);
     res.status(200).json("NOVA ROTA CRIADA");
   } catch (error) {
-    req.sentry.captureException(error);
-    console.log(error);
-    sendLogError({
-      data: error,
-      name: "ERROR IN CREATE NEW ROUTE",
-    });
+    logs.error(error);
     res.status(400).send("ERROR IN CREATE NEW ROUTE");
   }
 };

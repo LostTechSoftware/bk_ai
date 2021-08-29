@@ -4,17 +4,16 @@ const express = require("express");
 const router = express.Router();
 
 const authMiddleware = require("../middlewares/auth");
-const sendInfoLog = require("../middlewares/sendInfoLog");
 const { NewPartner, GetTime } = require("../controllers/Partner");
 const { NewUser, GetSugestion } = require("../controllers/User");
 const { NewRoute, GetRoute } = require("../controllers/Route");
 
-router.post("/create/partner", authMiddleware, sendInfoLog, NewPartner);
-router.post("/create/user", authMiddleware, sendInfoLog, NewUser);
-router.post("/create/route", authMiddleware, sendInfoLog, NewRoute);
+router.post("/create/partner", authMiddleware, NewPartner);
+router.post("/create/user", authMiddleware, NewUser);
+router.post("/create/route", authMiddleware, NewRoute);
 
-router.post("/get/user", authMiddleware, sendInfoLog, GetSugestion);
-router.post("/get/partner", authMiddleware, sendInfoLog, GetTime);
-router.post("/get/route", authMiddleware, sendInfoLog, GetRoute);
+router.post("/get/user", authMiddleware, GetSugestion);
+router.post("/get/partner", authMiddleware, GetTime);
+router.post("/get/route", authMiddleware, GetRoute);
 
 module.exports = (app) => app.use(router);

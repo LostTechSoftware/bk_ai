@@ -1,7 +1,8 @@
+const httpContext = require("express-http-context").ns;
 const AWS = require("aws-sdk");
 const { Consumer } = require("sqs-consumer");
-const httpContext = require("express-http-context");
-const { sendLogInfo, sendLogError } = require("../logs/coralogix");
+const { v4: uuidv4 } = require("uuid");
+const logs = require("../logs");
 
 const validatorJson = require("../validators/validatorJson");
 const { NewOrder } = require("../services/SqsServices/Order");
@@ -20,49 +21,52 @@ const sqsEvents = async (message, event) => {
 };
 
 function CreateConsumers() {
-  sendLogInfo({ data: `Initing ${queueUrl}`, name: "INFO" });
+  logs.info(`Initing ${queueUrl}`);
 
   const consumer = Consumer.create({
     queueUrl,
     sqs,
     handleMessage: async (message) => {
-      sendLogInfo({ data: message.Body, name: "INFO" });
-
       const orderData = validatorJson(message.Body) && JSON.parse(message.Body);
+      await httpContext.runAndReturn(async () => {
+        const requestId = orderData.request_id || uuidv4();
 
-      httpContext.set("requestId", orderData.request_id);
+        httpContext.set("requestId", requestId);
 
-      await sqsEvents(orderData.data, orderData.event);
+        logs.info(message.Body);
 
-      const deleteParams = {
-        QueueUrl: queueUrl,
-        ReceiptHandle: message.ReceiptHandle,
-      };
-      sqs.deleteMessage(deleteParams, function (error, data) {
-        if (error) {
-          sendLogError({ data: `Delete Error ${error}`, name: "ERROR" });
-        } else {
-          sendLogInfo({ data: `Message Deleted ${data}`, name: "INFO" });
-        }
+        await sqsEvents(orderData.data, orderData.event);
+
+        const deleteParams = {
+          QueueUrl: queueUrl,
+          ReceiptHandle: message.ReceiptHandle,
+        };
+        sqs.deleteMessage(deleteParams, function (error, data) {
+          if (error) {
+            logs.error(`Delete Error ${error}`);
+          } else {
+            logs.info(`Message Deleted ${data}`);
+          }
+        });
       });
     },
   });
 
   consumer.on("error", (err) => {
-    sendLogError({ data: err.message, name: "ERROR" });
+    logs.error(err.message);
   });
 
   consumer.on("processing_error", (err) => {
-    sendLogError({ data: err.message, name: "ERROR" });
+    logs.error(err.message);
   });
 
   consumer.on("timeout_error", (err) => {
-    sendLogError({ data: err.message, name: "ERROR" });
+    logs.error(err.message);
   });
 
   consumer.start();
 
-  sendLogInfo({ data: `Started ${queueUrl}`, name: "INFO" });
+  logs.info(`Started ${queueUrl}`);
 }
 
 module.exports = CreateConsumers;
