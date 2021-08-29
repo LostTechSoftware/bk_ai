@@ -1,5 +1,6 @@
 const AWS = require("aws-sdk");
 const { Consumer } = require("sqs-consumer");
+const httpContext = require("express-http-context");
 const { sendLogInfo, sendLogError } = require("../logs/coralogix");
 
 const validatorJson = require("../validators/validatorJson");
@@ -28,6 +29,8 @@ function CreateConsumers() {
       sendLogInfo({ data: message.Body, name: "INFO" });
 
       const orderData = validatorJson(message.Body) && JSON.parse(message.Body);
+
+      httpContext.set("requestId", orderData.request_id);
 
       await sqsEvents(orderData.data, orderData.event);
 
