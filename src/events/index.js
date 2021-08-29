@@ -1,5 +1,7 @@
+const httpContext = require("express-http-context").ns;
 const AWS = require("aws-sdk");
 const { Consumer } = require("sqs-consumer");
+const { v4: uuidv4 } = require("uuid");
 const logs = require("../logs");
 
 const validatorJson = require("../validators/validatorJson");
@@ -25,22 +27,27 @@ function CreateConsumers() {
     queueUrl,
     sqs,
     handleMessage: async (message) => {
-      logs.info(message.Body);
-
       const orderData = validatorJson(message.Body) && JSON.parse(message.Body);
+      await httpContext.runAndReturn(async () => {
+        const requestId = orderData.request_id || uuidv4();
 
-      await sqsEvents(orderData.data, orderData.event);
+        httpContext.set("requestId", requestId);
 
-      const deleteParams = {
-        QueueUrl: queueUrl,
-        ReceiptHandle: message.ReceiptHandle,
-      };
-      sqs.deleteMessage(deleteParams, function (error, data) {
-        if (error) {
-          logs.error(`Delete Error ${error}`);
-        } else {
-          logs.info(`Message Deleted ${data}`);
-        }
+        logs.info(message.Body);
+
+        await sqsEvents(orderData.data, orderData.event);
+
+        const deleteParams = {
+          QueueUrl: queueUrl,
+          ReceiptHandle: message.ReceiptHandle,
+        };
+        sqs.deleteMessage(deleteParams, function (error, data) {
+          if (error) {
+            logs.error(`Delete Error ${error}`);
+          } else {
+            logs.info(`Message Deleted ${data}`);
+          }
+        });
       });
     },
   });

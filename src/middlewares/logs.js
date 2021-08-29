@@ -5,7 +5,7 @@ const logs = require("../logs");
 
 const middlewaresLogs = async (app) => {
   app.all("*", (req, res, next) => {
-    const requestId = req.headers["request_id"] || uuidv4();
+    const requestId = req.headers.request_id || uuidv4();
 
     req.requestId = requestId;
 
