@@ -73,7 +73,7 @@
     "request": "2.88.2",
     "sandbox": "0.8.6",
     "sqs-consumer": "5.5.0",
-    "standard": "16.0.3"
+    "standard": "16.0.4"
   },
   "devDependencies": {
     "@babel/core": "7.13.10",
