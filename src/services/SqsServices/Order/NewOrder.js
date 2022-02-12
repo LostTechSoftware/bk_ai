@@ -59,7 +59,9 @@ const NewOrder = async (message) => {
         const diffHrs = Math.floor((diffMs % 86400000) / 3600000);
         const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000);
 
-        const partner = await Partner.findOne({ PartnerId });
+        const partner =
+          (await Partner.findOne({ PartnerId })) ||
+          (await Partner.create({ PartnerId }));
 
         const mediaDate = diffHrs * 60 + diffMins;
 
@@ -87,7 +89,8 @@ const NewOrder = async (message) => {
       try {
         logs.info(`Recalculando sugestões para o usuário ${username}`);
 
-        const user = await User.findOne({ UserId });
+        const user =
+          (await User.findOne({ UserId })) || (await User.create({ UserId }));
 
         for (const categorie of categories) {
           user.Categories.push(categorie);
