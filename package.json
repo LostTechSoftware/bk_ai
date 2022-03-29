@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@sentry/node": "6.2.1",
-    "@sentry/tracing": "6.2.5",
+    "@sentry/tracing": "6.18.2",
     "aws-sdk": "2.860.0",
     "axios": "0.21.1",
     "bcryptjs": "2.4.3",
