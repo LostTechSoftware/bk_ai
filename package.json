@@ -51,7 +51,7 @@
     "dotenv": "8.2.0",
     "eslint": "7.24.0",
     "eslint-config-airbnb": "18.2.1",
-    "express": "4.17.1",
+    "express": "4.17.3",
     "express-formidable": "1.2.0",
     "express-http-context": "1.2.4",
     "express-limiter": "1.6.1",
