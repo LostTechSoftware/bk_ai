@@ -60,7 +60,7 @@
     "fs": "0.0.1-security",
     "helmet": "4.6.0",
     "js-logger": "1.6.1",
-    "jsonwebtoken": "8.5.1",
+    "jsonwebtoken": "9.0.0",
     "lodash": "4.17.20",
     "moment": "2.29.1",
     "mongodb": "3.6.5",
